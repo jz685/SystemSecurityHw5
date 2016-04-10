@@ -4,6 +4,9 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.regex.*;
 import java.text.ParseException;
+import java.util.HashSet;
+import java.util.*;
+import java.util.Scanner;
 
 class classify {
 
@@ -13,24 +16,38 @@ class classify {
 	// this password/dictionary check file is provided by Openwall including easy passwords and dictionary 
 	// in many other languages
 	// http://www.openwall.com/wordlists/
-	static final String dictionaryFile = "passwordCheck";
+	static final String dictionaryFile = "passwordCheck.txt";
 	
-	public static final String comp8Str = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*(_|[^\\w])).+$";
+	// We consider "_" as a non-character symbol
+	public static final String comp8Str = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*(_|[\\W])).+$";
     public static final Pattern comp8Pattern = Pattern.compile(comp8Str);
+
+    public static final String nonAlpha = "[^a-zA-Z]";
 
 	public static void main(String[] args) {
 		// Check num of input
-		if (args.length != 1) {
-			System.err.println("Wrong number of arguments");
-			return;
-		}
+		//if (args.length != 1) {
+		//	System.err.println("Wrong number of arguments");
+		//	return;
+		//}
 		// Get input
-		String inputStr = args[0];
+		//String inputStr = args[0];
+		Scanner scan = new Scanner(System.in);
+		String inputStr = scan.nextLine();
 
 		// Test checkIsWord
 		System.out.println("Dictionary Contains? " + checkIsWord(inputStr));
 		System.out.println("Pass Comprehensive8 Test? " + checkComprehensive8(inputStr));
-		System.out.println("Pass Comprehensive8 Test? " + checkComprehensive16(inputStr));
+		System.out.println("Pass Comprehensive16 Test? " + checkComprehensive16(inputStr));
+		System.out.println("Pass At Least 4 Unique Char Test? " + extraCheckFor16(inputStr));
+
+		if (checkComprehensive8(inputStr) && (!checkIsWord(inputStr))) {
+			System.out.println("strong");
+		} else if (checkComprehensive16(inputStr) && extraCheckFor16(inputStr)) {
+			System.out.println("strong");
+		} else {
+			System.out.println("weak");
+		}
 
 	}
 
@@ -39,12 +56,17 @@ class classify {
 	 *	It may not contain a dictionary word.
 	 */
 	public static boolean checkIsWord (String str) {
+
+		String strAlpha = str.replaceAll(nonAlpha, "");
+		String strlower = strAlpha.toLowerCase();
+		System.out.println("removed non-alphabetic characters(lowered): " + strlower);
+
 		try {
 			File dict = new File(dictionaryFile);
 			BufferedReader reader = new BufferedReader(new FileReader(dict));
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.toLowerCase().equals(str.toLowerCase())) {
+				if (line.toLowerCase().equals(strlower)) {
 					return true;
 				} 
 			}
@@ -76,5 +98,22 @@ class classify {
 		} else {
 			return true;
 		}
+	}
+
+	public static boolean extraCheckFor16 (String str) {
+		Set<Character> charSet = new HashSet<>();
+		int counter = 0;
+		for (int i = 0; i < str.length(); i ++) {
+			char c = str.charAt(i);
+			if (!charSet.contains(c)) {
+				charSet.add(c);
+				counter ++;
+				// if more than 4 char found, return true
+				if (counter >= 4) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 }
