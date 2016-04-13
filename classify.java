@@ -66,7 +66,7 @@ class classify {
 			BufferedReader reader = new BufferedReader(new FileReader(dict));
 			String line;
 			while ((line = reader.readLine()) != null) {
-				if (line.toLowerCase().equals(strlower)) {
+				if (strlower.indexOf(line.toLowerCase()) >= 0) {
 					return true;
 				} 
 			}
