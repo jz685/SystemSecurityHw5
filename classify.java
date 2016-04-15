@@ -8,8 +8,29 @@ import java.util.HashSet;
 import java.util.*;
 import java.util.Scanner;
 
-class classify {
+/*	Readme
+ *	This program takes in one string as password and determine if it is a string password or a weak one. We do not allow space in password.
+ *	We used the free Openwall list as the dictionary in this program as it is used in the paper "Guess again (and again and again): Measuring password strength by 
+ *	simulating password-cracking algorithms" by Kelley et al. We also ignore case when comparing password with words provided in the dictionary. 
+ *
+ *	A password is considered strong if it meets any one of the following requirements:
+ *
+ *	1. Comprehensive 8+: The password is at least 8 characters long and must include at least an uppercase letter, a lowercase letter, a symbol, and a digit. 
+ *	And the password must not contains any common password sequence and dictionary words predefined in the free Openwall list that is at least 3 characters long.
+ *
+ *	2. Basic 16+: The password is at least 16 characters long and must include at least four different characters.
+ *
+ *	The reason why we choose Comprehensive 8 is that it is proven to be strong in the paper "Guess again (and again and again): Measuring password strength by 
+ *	simulating password-cracking algorithms" by Kelley et al. The only difference is that we allows password that contains dictionary words of length 3 characters or less. 
+ *	We decide to allow password that contains dictionary words of length 3 characters or less is because in the direction we are using, where are words like "1" and "a".
+ *	And it is clearly not correct to say that any password contains an "a" or "1" must be a weak password. 
+ *
+ *	The reason why we choose Basic 16 is that it is proven to be strong in the paper "Guess again (and again and again): Measuring password strength by 
+ *	simulating password-cracking algorithms" by Kelley et al. The only difference is that we require at least 4 different characters. It is because that we believe 
+ *	passwords like "1111111111111111" is not a strong password. 
+ */
 
+class classify {
 	// This english dictionary is provided by ubuntu as a internal dictionay file
 	// static final String dictionaryFile = "american-english";
 
@@ -17,30 +38,25 @@ class classify {
 	// in many other languages
 	// http://www.openwall.com/wordlists/
 	static final String dictionaryFile = "passwordCheck.txt";
-	
 	// We consider "_" as a non-character symbol
 	public static final String comp8Str = "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*(_|[\\W])).+$";
     public static final Pattern comp8Pattern = Pattern.compile(comp8Str);
-
     public static final String nonAlpha = "[^a-zA-Z]";
-
 	public static void main(String[] args) {
-		// Check num of input
-		//if (args.length != 1) {
-		//	System.err.println("Wrong number of arguments");
-		//	return;
-		//}
-		// Get input
-		//String inputStr = args[0];
+
 		Scanner scan = new Scanner(System.in);
 		String inputStr = scan.nextLine();
 
 		// Test checkIsWord
-		System.out.println("Dictionary Contains? " + checkIsWord(inputStr));
-		System.out.println("Pass Comprehensive8 Test? " + checkComprehensive8(inputStr));
-		System.out.println("Pass Comprehensive16 Test? " + checkComprehensive16(inputStr));
-		System.out.println("Pass At Least 4 Unique Char Test? " + extraCheckFor16(inputStr));
+		// System.out.println("Dictionary Contains? " + checkIsWord(inputStr));
+		// System.out.println("Pass Comprehensive8 Test? " + checkComprehensive8(inputStr));
+		// System.out.println("Pass Comprehensive16 Test? " + checkComprehensive16(inputStr));
+		// System.out.println("Pass At Least 4 Unique Char Test? " + extraCheckFor16(inputStr));
 
+		if (inputStr.indexOf(' ') >= 0) {
+			System.out.println("weak, as we do not allow space in password");
+			return;
+		}
 		if (checkComprehensive8(inputStr) && (!checkIsWord(inputStr))) {
 			System.out.println("strong");
 		} else if (checkComprehensive16(inputStr) && extraCheckFor16(inputStr)) {
@@ -48,7 +64,6 @@ class classify {
 		} else {
 			System.out.println("weak");
 		}
-
 	}
 
 	/*
@@ -56,17 +71,19 @@ class classify {
 	 *	It may not contain a dictionary word.
 	 */
 	public static boolean checkIsWord (String str) {
-
 		String strAlpha = str.replaceAll(nonAlpha, "");
 		String strlower = strAlpha.toLowerCase();
-		System.out.println("removed non-alphabetic characters(lowered): " + strlower);
-
+		// System.out.println("removed non-alphabetic characters(lowered): " + strlower);
 		try {
 			File dict = new File(dictionaryFile);
 			BufferedReader reader = new BufferedReader(new FileReader(dict));
 			String line;
 			while ((line = reader.readLine()) != null) {
+				// Do not include words that is too short
+				if (line.length() <= 3) continue;
+
 				if (strlower.indexOf(line.toLowerCase()) >= 0) {
+					System.out.println("Contain: " + line);
 					return true;
 				} 
 			}
