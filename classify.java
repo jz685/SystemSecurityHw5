@@ -26,10 +26,10 @@ class classify {
 		String inputStr = scan.nextLine();
 
 		// Test checkIsWord
-		System.out.println("Dictionary Contains? " + checkIsWord(inputStr));
-		System.out.println("Pass Comprehensive8 Test? " + checkComprehensive8(inputStr));
-		System.out.println("Pass Comprehensive16 Test? " + checkComprehensive16(inputStr));
-		System.out.println("Pass At Least 4 Unique Char Test? " + extraCheckFor16(inputStr));
+		// System.out.println("Dictionary Contains? " + checkIsWord(inputStr));
+		// System.out.println("Pass Comprehensive8 Test? " + checkComprehensive8(inputStr));
+		// System.out.println("Pass Comprehensive16 Test? " + checkComprehensive16(inputStr));
+		// System.out.println("Pass At Least 4 Unique Char Test? " + extraCheckFor16(inputStr));
 
 		if (inputStr.indexOf(' ') >= 0) {
 			System.out.println("weak, as we do not allow space in password");
@@ -59,7 +59,7 @@ class classify {
 			while ((line = reader.readLine()) != null) {
 
 				if (strlower.equals(line.toLowerCase())) {
-					System.out.println("Contains: " + line);
+					// System.out.println("Contains: " + line);
 					return true;
 				} 
 			}
