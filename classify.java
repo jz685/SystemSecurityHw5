@@ -8,28 +8,6 @@ import java.util.HashSet;
 import java.util.*;
 import java.util.Scanner;
 
-/*	Readme
- *	This program takes in one string as password and determine if it is a string password or a weak one. We do not allow space in password.
- *	We used the free Openwall list as the dictionary in this program as it is used in the paper "Guess again (and again and again): Measuring password strength by 
- *	simulating password-cracking algorithms" by Kelley et al. We also ignore case when comparing password with words provided in the dictionary. 
- *
- *	A password is considered strong if it meets any one of the following requirements:
- *
- *	1. Comprehensive 8+: The password is at least 8 characters long and must include at least an uppercase letter, a lowercase letter, a symbol, and a digit. 
- *	And the password must not contains any common password sequence and dictionary words predefined in the free Openwall list that is at least 2 characters long.
- *
- *	2. Basic 16+: The password is at least 16 characters long and must include at least four different characters.
- *
- *	The reason why we choose Comprehensive 8 is that it is proven to be strong in the paper "Guess again (and again and again): Measuring password strength by 
- *	simulating password-cracking algorithms" by Kelley et al. The only difference is that we allows password that contains dictionary words of length 2 characters or less. 
- *	We decide to allow password that contains dictionary words of length 2 characters or less is because in the direction we are using, where are words like "1" and "a".
- *	And it is clearly not correct to say that any password contains an "a" or "1" must be a weak password. 
- *
- *	The reason why we choose Basic 16 is that it is proven to be strong in the paper "Guess again (and again and again): Measuring password strength by 
- *	simulating password-cracking algorithms" by Kelley et al. The only difference is that we require at least 4 different characters. It is because that we believe 
- *	passwords like "1111111111111111" is not a strong password. 
- */
-
 class classify {
 	// This english dictionary is provided by ubuntu as a internal dictionay file
 	// static final String dictionaryFile = "american-english";
@@ -48,10 +26,10 @@ class classify {
 		String inputStr = scan.nextLine();
 
 		// Test checkIsWord
-		// System.out.println("Dictionary Contains? " + checkIsWord(inputStr));
-		// System.out.println("Pass Comprehensive8 Test? " + checkComprehensive8(inputStr));
-		// System.out.println("Pass Comprehensive16 Test? " + checkComprehensive16(inputStr));
-		// System.out.println("Pass At Least 4 Unique Char Test? " + extraCheckFor16(inputStr));
+		System.out.println("Dictionary Contains? " + checkIsWord(inputStr));
+		System.out.println("Pass Comprehensive8 Test? " + checkComprehensive8(inputStr));
+		System.out.println("Pass Comprehensive16 Test? " + checkComprehensive16(inputStr));
+		System.out.println("Pass At Least 4 Unique Char Test? " + extraCheckFor16(inputStr));
 
 		if (inputStr.indexOf(' ') >= 0) {
 			System.out.println("weak, as we do not allow space in password");
@@ -79,8 +57,6 @@ class classify {
 			BufferedReader reader = new BufferedReader(new FileReader(dict));
 			String line;
 			while ((line = reader.readLine()) != null) {
-				// Do not include words that is too short
-				if (line.length() <= 2) continue;
 
 				if (strlower.equals(line.toLowerCase())) {
 					System.out.println("Contains: " + line);
