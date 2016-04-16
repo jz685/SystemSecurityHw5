@@ -1,3 +1,0 @@
-# SystemSecurityHw5
-
-Hello~

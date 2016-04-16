@@ -82,8 +82,8 @@ class classify {
 				// Do not include words that is too short
 				if (line.length() <= 2) continue;
 
-				if (strlower.indexOf(line.toLowerCase()) >= 0) {
-					System.out.println("Contain: " + line);
+				if (strlower.equals(line.toLowerCase())) {
+					System.out.println("Contains: " + line);
 					return true;
 				} 
 			}
